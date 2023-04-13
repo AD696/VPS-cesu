@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# 安装 speedtest-cli
+sudo apt update
+sudo apt install speedtest-cli -y
+
+# 测试服务器数组
+servers=(
+    # 中国电信（广东-广州）
+    5082
+    # 中国联通（上海）
+    7642
+    # 中国移动（广东-广州）
+    5086
+)
+
+# 测速函数
+function speedtest {
+    echo "Testing server ID: $1"
+    speedtest-cli --server "$1"
+}
+
+# 启动脚本
+function start_script {
+    echo "Speedtest script is running."
+    for server in "${servers[@]}"; do
+        speedtest $server
+    done
+}
+
+# 退出脚本
+function stop_script {
+    echo "Speedtest script is stopped."
+    exit 0
+}
+
+# 处理退出信号
+trap 'stop_script' INT TERM
+
+# 显示菜单
+while true; do
+    clear
+    echo "------------------------"
+    echo "        测速菜单        "
+    echo "------------------------"
+    echo "1. 开始测速"
+    echo "2. 退出脚本"
+    echo "------------------------"
+    read -p "请输入选项：" choice
+    case $choice in
+        1)
+            start_script
+            ;;
+        2)
+            stop_script
+            ;;
+        *)
+            echo "无效的选项，请重试。"
+            read -p "按任意键返回
